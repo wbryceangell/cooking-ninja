@@ -27,3 +27,25 @@
   text-decoration: none;
   margin: 20px auto;
 }
+
+.create button:disabled {
+  cursor: default;
+  background: #555;
+}
+
+.ingredients {
+  display: flex;
+  align-items: center;
+}
+
+.ingredients button {
+  margin: 0 0 0 10px;
+}
+
+.create em::after {
+  content: ", ";
+}
+
+.create em:last-child::after {
+  content: "";
+}
