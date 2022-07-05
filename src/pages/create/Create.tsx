@@ -40,7 +40,7 @@ const Create: React.FC<Props> = ({}) => {
         if (error.name === "AbortError") return;
         state.error = error;
       } finally {
-		setRecipe(undefined);
+        setRecipe(undefined);
         history.push("/", state);
       }
     })();
