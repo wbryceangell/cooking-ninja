@@ -1,4 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { RecipeData } from "../../types";
+import { useHistory } from "react-router-dom";
 import "./Create.css";
 
 type Props = {};
@@ -9,12 +11,53 @@ const Create: React.FC<Props> = ({}) => {
   const [cookingTime, setCookingTime] = useState("");
   const [ingredient, setIngredient] = useState("");
   const [ingredients, setIngredients] = useState<Array<string>>([]);
+  const [recipe, setRecipe] = useState<Omit<RecipeData, "id">>();
   const [disableAdd, setDisableAdd] = useState(true);
+  const [disableSubmit, setDisableSubmit] = useState(false);
   const ingredientInput = useRef<HTMLInputElement>(null);
+  const history = useHistory();
+
+  useEffect(() => {
+    if (!recipe) return;
+    const controller = new AbortController();
+
+    (async () => {
+      const state: { error?: Error } = {};
+      const { signal } = controller;
+
+      try {
+        const response = await fetch("http://localhost:3001/recipes", {
+          signal,
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(recipe),
+        });
+        if (!response.ok) throw new Error(response.statusText);
+      } catch (e) {
+        const error = e as Error;
+        if (error.name === "AbortError") return;
+        state.error = error;
+      } finally {
+		setRecipe(undefined);
+        history.push("/", state);
+      }
+    })();
+
+    return () => controller.abort();
+  }, [recipe]);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    console.log(title, method, cookingTime, ingredients);
+    setDisableAdd(true);
+    setDisableSubmit(true);
+    setRecipe({
+      method,
+      ingredients,
+      title,
+      cookingTime: `${cookingTime} minutes`,
+    });
   };
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const value = e.target.value;
@@ -86,7 +129,9 @@ const Create: React.FC<Props> = ({}) => {
             required
           />
         </label>
-        <button className="btn">submit</button>
+        <button className="btn" disabled={disableSubmit}>
+          submit
+        </button>
       </form>
     </div>
   );
