@@ -11,7 +11,7 @@ const Navbar: React.FC<Props> = ({}) => {
         <Link className="brand" to="/">
           <h1>Cooking Ninja</h1>
         </Link>
-		<Searchbar />
+        <Searchbar />
         <Link to="/create">Create recipe</Link>
       </nav>
     </div>

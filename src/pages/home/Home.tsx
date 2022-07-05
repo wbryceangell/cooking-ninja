@@ -13,11 +13,10 @@ const Home: React.FC<Props> = ({}) => {
     isPending,
     error,
   } = useFetch<Array<RecipeData>>("http://localhost:3001/recipes");
-  const location = useLocation<{ error?: Error }>();
+  const location = useLocation<{ error?: Error } | undefined>();
 
   useEffect(() => {
-    const { error } = location?.state;
-    if (error) alert(error.message);
+    if (location?.state?.error) alert(location?.state?.error);
   }, [location]);
 
   return (
