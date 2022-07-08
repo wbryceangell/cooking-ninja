@@ -6,15 +6,11 @@ import Searchbar from "./Searchbar";
 interface Props {}
 
 const Navbar: React.FC<Props> = ({}) => {
-  const { color, dispatch } = useTheme();
+  const { color } = useTheme();
 
   return (
     <div className="navbar" style={{ background: color }}>
-      <nav
-        onClick={() => {
-          dispatch && dispatch({ type: "CHANGE_COLOR", payload: "pink" });
-        }}
-      >
+      <nav>
         <Link className="brand" to="/">
           <h1>Cooking Ninja</h1>
         </Link>
