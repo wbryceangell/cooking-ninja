@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { RecipeData } from "../../types";
 import { useHistory } from "react-router-dom";
 import "./Create.css";
+import { useTheme } from "../../hooks/useTheme";
 
 type Props = {};
 
@@ -78,9 +79,10 @@ const Create: React.FC<Props> = ({}) => {
     setIngredient("");
     ingredientInput.current?.focus();
   };
+  const { mode } = useTheme();
 
   return (
-    <div className="create">
+    <div className={`create ${mode}`}>
       <h2 className="page-title">Add a New Recipe</h2>
       <form onSubmit={handleSubmit}>
         <label>

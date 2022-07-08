@@ -49,3 +49,8 @@
 .create em:last-child::after {
   content: "";
 }
+
+/* dark mode */
+.create.dark {
+  color: #e4e4e4;
+}

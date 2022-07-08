@@ -46,3 +46,10 @@ textarea {
   text-align: center;
   margin: 40px auto;
 }
+
+/* dark mode */
+.dark .page-title,
+.dark .loading,
+.dark .error {
+  color: #e4e4e4;
+}

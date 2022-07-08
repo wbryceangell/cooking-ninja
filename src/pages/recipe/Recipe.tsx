@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
+import { useTheme } from "../../hooks/useTheme";
 import { RecipeData } from "../../types";
 import "./Recipe.css";
 
@@ -12,8 +13,9 @@ const Recipe: React.FC<Props> = ({}) => {
     isPending,
     error,
   } = useFetch<RecipeData>(`http://localhost:3001/recipes/${id}`);
+  const { mode } = useTheme();
   return (
-    <div className="recipe">
+    <div className={`recipe ${mode}`}>
       {error && <p className="error">{error.message}</p>}
       {isPending && <p className="loading">Loading...</p>}
       {recipe && (
