@@ -1,12 +1,26 @@
-import React, { createContext } from "react";
+import React, { createContext, Reducer, useReducer } from "react";
 
-export const ThemeContext = createContext({color: "blue"});
+type State = Partial<{ color: string }>;
+type Action = { type: "CHANGE_COLOR"; payload?: any };
+const themeReducer: Reducer<State, Action> = (state, action) => {
+  const { type, payload } = action;
+  switch (type) {
+    case "CHANGE_COLOR":
+      return { ...state, color: payload };
+    default:
+      return state;
+  }
+};
 
-type Props = React.PropsWithChildren & {};
-
-export const ThemeProvider: React.FC<Props> = ({ children }) => {
+export const ThemeContext = createContext<
+  State & { dispatch?: React.Dispatch<Action> }
+>({});
+export const ThemeProvider: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
+  const [state, dispatch] = useReducer(themeReducer, {});
   return (
-    <ThemeContext.Provider value={{color: "blue"}}>
+    <ThemeContext.Provider value={{ ...state, dispatch }}>
       {children}
     </ThemeContext.Provider>
   );
