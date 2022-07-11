@@ -51,9 +51,9 @@
   margin: 20px auto 0;
 }
 
-.delete {
+.recipe-list .card .delete {
   position: absolute;
-  top: 10px;
+  bottom: 20px;
   right: 10px;
   cursor: pointer;
   filter: invert(60%);

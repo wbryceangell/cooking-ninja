@@ -1,7 +1,7 @@
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
 import { RecipeData } from "../types";
-import trashcanIcon from "../assets/trashcan.svg";
+import deleteIcon from "../assets/delete-icon.svg";
 import "./RecipeList.css";
 import { firestore } from "../firebase/config";
 
@@ -20,7 +20,10 @@ const RecipeList: React.FC<Props> = ({ recipes }) => {
     firestore
       .collection("recipes")
       .doc(id)
-      .delete();
+      .delete()
+      .catch((error: Error) => {
+        alert(error.message);
+      });
   };
 
   return (
@@ -33,7 +36,7 @@ const RecipeList: React.FC<Props> = ({ recipes }) => {
           <Link to={`/recipes/${recipe.id}`}>Cook This</Link>
           <img
             className="delete"
-            src={trashcanIcon}
+            src={deleteIcon}
             onClick={() => handleClick(recipe.id)}
           />
         </div>

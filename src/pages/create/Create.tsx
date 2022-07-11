@@ -21,16 +21,19 @@ const Create: React.FC<Props> = ({}) => {
 
   useEffect(() => {
     if (!recipe) return;
-    const state: { error?: Error } = {};
     firestore
       .collection("recipes")
       .add(recipe)
+      .then(() => {
+        history.push("/");
+      })
       .catch((error: Error) => {
-        state.error = error;
+        alert(error.message);
       })
       .finally(() => {
         setRecipe(undefined);
-        history.push("/", state);
+        setDisableAdd(false);
+        setDisableSubmit(false);
       });
   }, [recipe]);
 
@@ -45,12 +48,14 @@ const Create: React.FC<Props> = ({}) => {
       cookingTime: `${cookingTime} minutes`,
     });
   };
+
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const value = e.target.value;
     setIngredient(value);
     if (value) setDisableAdd(false);
     else setDisableAdd(true);
   };
+
   const handleAdd: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     const normalizedIngredient = ingredient.trim().toLowerCase();
@@ -64,6 +69,7 @@ const Create: React.FC<Props> = ({}) => {
     setIngredient("");
     ingredientInput.current?.focus();
   };
+
   const { mode } = useTheme();
 
   return (

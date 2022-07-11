@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import RecipeList from "../../components/RecipeList";
 import { firestore } from "../../firebase/config";
 import { RecipeData } from "../../types";
@@ -11,21 +10,17 @@ const Home: React.FC<Props> = ({}) => {
   const [recipes, setRecipes] = useState<Array<RecipeData>>();
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState<Error>();
-  const location = useLocation<{ error?: Error } | undefined>();
 
   useEffect(() => {
-    if (location?.state?.error) alert(location?.state?.error);
-  }, [location]);
-
-  useEffect(() => {
-    setError(undefined);
-    setRecipes(undefined);
-    setIsPending(true);
-    firestore
-      .collection("recipes")
-      .get()
-      .then((snapshot) => {
-        if (snapshot.empty) throw new Error("No recipes to load");
+    return firestore.collection("recipes").onSnapshot(
+      (snapshot) => {
+        setError(undefined);
+        setRecipes(undefined);
+        if (snapshot.empty) {
+          setIsPending(false);
+          setError(new Error("No recipes to load"));
+          return;
+        }
         const recipes: Array<RecipeData> = [];
         snapshot.docs.forEach((doc) =>
           recipes.push({
@@ -35,11 +30,13 @@ const Home: React.FC<Props> = ({}) => {
         );
         setIsPending(false);
         setRecipes(recipes);
-      })
-      .catch((error: Error) => {
+      },
+      (error) => {
+        setRecipes(undefined);
         setIsPending(false);
         setError(error);
-      });
+      }
+    );
   }, []);
 
   return (

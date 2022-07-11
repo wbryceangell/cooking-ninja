@@ -15,26 +15,41 @@ const Recipe: React.FC<Props> = ({}) => {
   const [error, setError] = useState<Error>();
 
   useEffect(() => {
-    setError(undefined);
-    setRecipe(undefined);
-    setIsPending(true);
+    return firestore
+      .collection("recipes")
+      .doc(id)
+      .onSnapshot(
+        (doc) => {
+          setError(undefined);
+          setRecipe(undefined);
+          if (!doc.exists) {
+            setIsPending(false);
+            setError(new Error("Could not find that recipe"));
+            return;
+          }
+          setIsPending(false);
+          setRecipe({
+            id: doc.id,
+            ...(doc.data() as Omit<RecipeData, "id">),
+          });
+        },
+        (error) => {
+          setRecipe(undefined);
+          setIsPending(false);
+          setError(error);
+        }
+      );
+  }, [id]);
+
+  const handleClick = () => {
     firestore
       .collection("recipes")
       .doc(id)
-      .get()
-      .then((doc) => {
-        if (!doc.exists) throw new Error("Could not find that recipe");
-        setIsPending(false);
-        setRecipe({
-          id: doc.id,
-          ...(doc.data() as Omit<RecipeData, "id">),
-        });
-      })
+      .update({ title: "Something different" })
       .catch((error: Error) => {
-        setIsPending(false);
-        setError(error);
+        alert(error.message);
       });
-  }, [id]);
+  };
 
   return (
     <div className={`recipe ${mode}`}>
@@ -50,6 +65,7 @@ const Recipe: React.FC<Props> = ({}) => {
             ))}
           </ul>
           <p className="method">{recipe.method}</p>
+          <button onClick={handleClick}>update me</button>
         </>
       )}
     </div>
