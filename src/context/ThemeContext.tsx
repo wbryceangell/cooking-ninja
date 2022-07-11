@@ -29,8 +29,8 @@ export const ThemeProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(themeReducer, {
-    color: ThemeColors.Purple,
-    mode: ThemeModes.Dark,
+    color: ThemeColors.Green,
+    mode: ThemeModes.Light,
   });
   return (
     <ThemeContext.Provider value={{ ...state, dispatch }}>
