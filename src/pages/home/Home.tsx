@@ -18,17 +18,14 @@ const Home: React.FC<Props> = ({}) => {
   }, [location]);
 
   useEffect(() => {
-	setError(undefined);
-	setRecipes(undefined);
-	setIsPending(true);
+    setError(undefined);
+    setRecipes(undefined);
+    setIsPending(true);
     firestore
       .collection("recipes")
       .get()
       .then((snapshot) => {
-        if (snapshot.empty) {
-          throw new Error("No recipes to load.");
-        }
-
+        if (snapshot.empty) throw new Error("No recipes to load");
         const recipes: Array<RecipeData> = [];
         snapshot.docs.forEach((doc) =>
           recipes.push({
