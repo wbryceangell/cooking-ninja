@@ -3,6 +3,7 @@ import { RecipeData } from "../../types";
 import { useHistory } from "react-router-dom";
 import "./Create.css";
 import { useTheme } from "../../hooks/useTheme";
+import { firestore } from "../../firebase/config";
 
 type Props = {};
 
@@ -20,33 +21,17 @@ const Create: React.FC<Props> = ({}) => {
 
   useEffect(() => {
     if (!recipe) return;
-    const controller = new AbortController();
-
-    (async () => {
-      const state: { error?: Error } = {};
-      const { signal } = controller;
-
-      try {
-        const response = await fetch("http://localhost:3001/recipes", {
-          signal,
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(recipe),
-        });
-        if (!response.ok) throw new Error(response.statusText);
-      } catch (e) {
-        const error = e as Error;
-        if (error.name === "AbortError") return;
+    const state: { error?: Error } = {};
+    firestore
+      .collection("recipes")
+      .add(recipe)
+      .catch((error: Error) => {
         state.error = error;
-      } finally {
+      })
+      .finally(() => {
         setRecipe(undefined);
         history.push("/", state);
-      }
-    })();
-
-    return () => controller.abort();
+      });
   }, [recipe]);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
